@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Дослідження циклічного надлишкового коду ( CRC )</title>
+    <title>Дослідження циклічного надлишкового коду (CRC)</title>
     <style>
         #results {
             margin-top: 20px;
@@ -10,59 +10,59 @@
     </style>
 </head>
 <body>
-    <h2>Дослідження циклічного надлишкового коду ( CRC )</h2>
-    <button onclick="generateAndDisplaySequences()">Генерувати та відобразити послідовності</button>
-    <div id="results">
-        <!-- Тут будуть відображені результати -->
-    </div>
+<h2>Дослідження циклічного надлишкового коду (CRC)</h2>
+<button onclick="generateAndDisplaySequences()">Генерувати та відобразити послідовності</button>
+<div id="results">
+    <!-- Тут будуть відображені результати -->
+</div>
 
-    <script>
-        const POLYNOMIAL = 0x89D3; // x^16+x^15+x^11+x^9+x^8+x^7+x^5+x^4+x^2+x+1 для CRC-16-T10-DIF
+<script>
+    const POLYNOMIAL = 0x89D3; // x^16+x^15+x^11+x^9+x^8+x^7+x^5+x^4+x^2+x+1 для CRC-16-T10-DIF
 
-        function generateRandomSequence(length) {
-            let sequence = '';
-            for (let i = 0; i < length; i++) {
-                sequence += Math.round(Math.random()).toString();
-            }
-            return sequence;
+    function generateRandomSequence(length) {
+        let sequence = '';
+        for (let i = 0; i < length; i++) {
+            sequence += Math.round(Math.random()).toString();
         }
+        return sequence;
+    }
 
-        function computeCRC(data) {
-            let crc = 0xFFFF; // Ініціалізуємо з 0xFFFF
-            data.split('').forEach((bit, index) => {
-                let bitValue = parseInt(bit, 2);
-                crc ^= (bitValue << 8);
-                for (let i = 0; i < 8; i++) {
-                    if (crc & 0x8000) {
-                        crc = (crc << 1) ^ POLYNOMIAL;
-                    } else {
-                        crc <<= 1;
-                    }
-                    crc &= 0xFFFF; // Забезпечуємо, що crc залишається 16-бітним
+    function computeCRC(data) {
+        let crc = 0xFFFF; // Ініціалізуємо з 0xFFFF
+        const binaryData = parseInt(data, 2); // Конвертуємо рядок у числове значення
+        for (let i = 0; i < data.length; i++) {
+            crc ^= (binaryData << 8);
+            for (let j = 0; j < 8; j++) {
+                if (crc & 0x8000) {
+                    crc = (crc << 1) ^ POLYNOMIAL;
+                } else {
+                    crc <<= 1;
                 }
-            });
-
-            // Остаточне XOR-перетворення
-            crc ^= 0xFFFF;
-            return crc.toString(16).toUpperCase();
+                crc &= 0xFFFF; // Забезпечуємо, що crc залишається 16-бітним
+            }
         }
+        // Остаточне XOR-перетворення
+        crc ^= 0xFFFF;
+        return crc.toString(16).toUpperCase();
+    }
 
-        function generateAndDisplaySequences() {
-            const K = 1000; // Довжина послідовності
-            const randomSequence = generateRandomSequence(K);
-            const crcValue = computeCRC(randomSequence);
-            const sequenceWithCRC = randomSequence + crcValue;
-            const reComputedCRC = computeCRC(sequenceWithCRC);
+    function generateAndDisplaySequences() {
+        const K = 1000; // Довжина послідовності
+        const randomSequence = generateRandomSequence(K);
+        const crcValue = computeCRC(randomSequence);
+        const sequenceWithCRC = randomSequence + crcValue;
+        const reComputedCRC = computeCRC(sequenceWithCRC);
 
-            // Перевірка правильності обчислення CRC
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = `
+        // Перевірка правильності обчислення CRC
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = `
                 <p>Згенерована послідовність: ${randomSequence}</p>
                 <p>CRC послідовності: ${crcValue}</p>
                 <p>Послідовність з доданим CRC: ${sequenceWithCRC}</p>
                 <p>Перевірене знову обчислене CRC нової послідовності (повинно бути 0, якщо правильно): ${reComputedCRC}</p>
             `;
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
+
