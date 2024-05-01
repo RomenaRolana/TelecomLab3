@@ -41,33 +41,21 @@
                 crc &= 0xFFFF; // Забезпечуємо, що crc залишається 16-бітним
             }
         }
-        // Остаточне XOR-перетворення
-        crc ^= 0xFFFF;
-        // Перевірка, що crc є 16-бітним числом
-        if (crc < 0x10000) {
-            crc = crc.toString(16).toUpperCase();
-            // Додамо нулі зліва, якщо потрібно
-            while (crc.length < 4) {
-                crc = "0" + crc;
-            }
-            return crc;
-        } else {
-            return "Error: CRC is not a 16-bit number!";
-        }
+        return crc; // Повертаємо числове значення CRC без обробки в шістнадцятковий формат
     }
 
     function generateAndDisplaySequences() {
         const K = 1000; // Довжина послідовності
         const randomSequence = generateRandomSequence(K);
         const crcValue = computeCRC(randomSequence);
-        const sequenceWithCRC = randomSequence + crcValue;
+        const sequenceWithCRC = randomSequence + crcValue.toString(16).toUpperCase(); // Додаємо CRC до послідовності у шістнадцятковому форматі
         const reComputedCRC = computeCRC(sequenceWithCRC);
 
         // Перевірка правильності обчислення CRC
         const resultsDiv = document.getElementById('results');
         resultsDiv.innerHTML = `
                 <p>Згенерована послідовність: ${randomSequence}</p>
-                <p>CRC послідовності: ${crcValue}</p>
+                <p>CRC послідовності: ${crcValue.toString(16).toUpperCase()}</p>
                 <p>Послідовність з доданим CRC: ${sequenceWithCRC}</p>
                 <p>Перевірене знову обчислене CRC нової послідовності (повинно бути 0, якщо правильно): ${reComputedCRC}</p>
             `;
