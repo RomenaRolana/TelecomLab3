@@ -32,7 +32,7 @@
             data.split('').forEach((bit, index) => {
                 let bitValue = parseInt(bit, 2);
                 let topBit = (crc >>> 15) & 1;
-                crc = ((crc << 1) | bitValue) & 0xFFFF; // залишити 16-бітовою
+                crc = ((crc << 1) | bitValue) & 0xFFFF; // Keep it to 16 bits
                 if (topBit) {
                     crc ^= POLYNOMIAL;
                 }
@@ -44,11 +44,14 @@
         }
 
         function generateAndDisplaySequences() {
-            const K = 1000; // Довжина послідовності
+            const K = 1000; // Length of the sequence
             const randomSequence = generateRandomSequence(K);
             const crcValue = computeCRC(randomSequence);
             const sequenceWithCRC = randomSequence + crcValue;
             const reComputedCRC = computeCRC(sequenceWithCRC);
+
+            // Perform XOR out on the recomputed CRC
+            reComputedCRC ^= 0xFFFF;
 
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = `
@@ -61,3 +64,4 @@
     </script>
 </body>
 </html>
+
