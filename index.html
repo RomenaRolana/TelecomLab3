@@ -28,7 +28,7 @@
         }
 
         function computeCRC(data) {
-            let crc = 0xFFFF; // Initialize with 0xFFFF instead of 0
+            let crc = 0xFFFF; // Ініціалізуємо з 0xFFFF
             data.split('').forEach((bit, index) => {
                 let bitValue = parseInt(bit, 2);
                 crc ^= (bitValue << 8);
@@ -38,28 +38,31 @@
                     } else {
                         crc <<= 1;
                     }
+                    crc &= 0xFFFF; // Забезпечуємо, що crc залишається 16-бітним
                 }
             });
+
+            // Остаточне XOR-перетворення
+            crc ^= 0xFFFF;
             return crc.toString(16).toUpperCase();
         }
 
         function generateAndDisplaySequences() {
-            const K = 1000; // Length of the sequence
+            const K = 1000; // Довжина послідовності
             const randomSequence = generateRandomSequence(K);
             const crcValue = computeCRC(randomSequence);
             const sequenceWithCRC = randomSequence + crcValue;
             const reComputedCRC = computeCRC(sequenceWithCRC);
 
+            // Перевірка правильності обчислення CRC
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = `
-                <p>Generated Sequence: ${randomSequence}</p>
-                <p>CRC of Sequence: ${crcValue}</p>
-                <p>Sequence with CRC appended: ${sequenceWithCRC}</p>
-                <p>Recomputed CRC of the new sequence (should be 0 if correct): ${reComputedCRC}</p>
+                <p>Згенерована послідовність: ${randomSequence}</p>
+                <p>CRC послідовності: ${crcValue}</p>
+                <p>Послідовність з доданим CRC: ${sequenceWithCRC}</p>
+                <p>Перевірене знову обчислене CRC нової послідовності (повинно бути 0, якщо правильно): ${reComputedCRC}</p>
             `;
         }
     </script>
 </body>
 </html>
-
-
