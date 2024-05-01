@@ -28,18 +28,18 @@
         }
 
         function computeCRC(data) {
-            let crc = 0;
+            let crc = 0xFFFF; // Initialize with 0xFFFF instead of 0
             data.split('').forEach((bit, index) => {
                 let bitValue = parseInt(bit, 2);
-                let topBit = (crc >>> 15) & 1;
-                crc = ((crc << 1) | bitValue) & 0xFFFF; // Keep it to 16 bits
-                if (topBit) {
-                    crc ^= POLYNOMIAL;
+                crc ^= (bitValue << 8);
+                for (let i = 0; i < 8; i++) {
+                    if (crc & 0x8000) {
+                        crc = (crc << 1) ^ POLYNOMIAL;
+                    } else {
+                        crc <<= 1;
+                    }
                 }
             });
-
-            // Final XOR out
-            crc ^= 0xFFFF;
             return crc.toString(16).toUpperCase();
         }
 
@@ -49,9 +49,6 @@
             const crcValue = computeCRC(randomSequence);
             const sequenceWithCRC = randomSequence + crcValue;
             const reComputedCRC = computeCRC(sequenceWithCRC);
-
-            // Perform XOR out on the recomputed CRC
-            reComputedCRC ^= 0xFFFF;
 
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = `
@@ -64,4 +61,5 @@
     </script>
 </body>
 </html>
+
 
